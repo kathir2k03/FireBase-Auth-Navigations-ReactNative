@@ -1,21 +1,38 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import auth from "../../services/firebaseAuth";
-function LoginScreen() {
+function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [textError, setTextError] = useState(null);
+
+  const checkIfLoggedIn = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate("Dashboard");
+      }
+    });
+  };
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
+
   function handleLogin() {
     setTextError(null);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
+        navigation.navigate("Dashboard");
       })
       .catch((err) => {
         setTextError(err.message);
       });
+  }
+
+  function goToRegister() {
+    navigation.navigate("Register");
   }
   return (
     <View style={styles.container}>
@@ -37,7 +54,7 @@ function LoginScreen() {
         <Button title="Login" onPress={handleLogin} />
       </View>
       {textError && <Text style={{ color: "red" }}> {textError} </Text>}
-      <Text>Create an Account ? Register here</Text>
+      <Text onPress={goToRegister}>Create an Account ? Register here</Text>
     </View>
   );
 }
