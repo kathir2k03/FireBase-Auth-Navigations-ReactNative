@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import auth from "../../services/firebaseAuth";
-function RegisterScreen() {
+function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [textError, setTextError] = useState(null);
@@ -11,11 +11,17 @@ function RegisterScreen() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        navigation.navigate("Dashboard");
       })
       .catch((err) => {
         setTextError(err.message);
       });
   }
+
+  function goToLogin() {
+    navigation.navigate("Login");
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
@@ -36,7 +42,7 @@ function RegisterScreen() {
         <Button title="Register" onPress={handleRegister} />
       </View>
       {textError && <Text style={{ color: "red" }}> {textError} </Text>}
-      <Text>Already Have an Account ? Login here</Text>
+      <Text onPress={goToLogin}>Already Have an Account ? Login here</Text>
     </View>
   );
 }

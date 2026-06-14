@@ -2,17 +2,16 @@ import { signOut } from "firebase/auth";
 import { Button, StyleSheet, Text, View } from "react-native";
 import auth from "../../services/firebaseAuth";
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ navigation }) => {
   function handleLogout() {
-    signOut(auth);
-    // onAuthStateChanged(auth, (user) => {
-    //   if (user) {
-    //     console.log("LOGGED IN");
-    //     console.log(user);
-    //   } else {
-    //     console.log("LOGGED OUT");
-    //   }
-    // });
+    signOut(auth)
+      .then(() => {
+        console.log("Logged Out");
+        navigation.navigate("Login");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   return (
     <View style={styles.container}>
